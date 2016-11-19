@@ -3,70 +3,24 @@
 // ini_set('session.cookie_secure', 1); // httpsによる通信時のみ Cookie の内容を送信
 // セッション開始
 session_start();
-
-$db['host'] = "localhost";
-$db['user'] = "root";
-$db['pass'] = "root";
-$db['unix_socket'] = "/tmp/mysql.sock";	// 自分のmysql設定では必要
-$db['dbname'] = "loginMgr";
+include_once('Header.php');
+include_once('Functions.php');
 
 // エラーメッセージの初期化
 $errorMessagge = "";
 
 // ログインボタンが押された場合
 if (isset($_POST["login"])) {
-    // 1. ユーザIDの入力チェック
-    if (empty($_POST["userid"])) {  // emptyは値が空のとき
+    // ユーザIDの入力チェック
+    if (empty($_POST["userid"])) {
         $errorMessage = 'ユーザーIDが未入力です。';
     } else if (empty($_POST["password"])) {
         $errorMessage = 'パスワードが未入力です。';
     }
 
     if (!empty($_POST["userid"]) && !empty($_POST["password"])) {
-        // 入力したユーザIDを格納
-        $userid = $_POST["userid"];
-
-        // 2. ユーザIDとパスワードが入力されていたら認証する
-        $dsn = sprintf('mysql: host=%s; dbname=%s; unix_socket=%s; charset=utf8', $db['host'], $db['dbname'], $db['unix_socket']);
-
-        // 3. エラー処理
-        try {
-            $pdo = new PDO($dsn, $db['user'], $db['pass'], array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
-
-            $stmt = $pdo->prepare('SELECT * FROM udata WHERE id = ?');
-            $stmt->execute(array($userid));
-
-            $password = $_POST["password"];
-
-            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (password_verify($password, $row['password'])) {
-                    session_regenerate_id(true);
-
-                    // 入力したIDのユーザー名を取得
-                    $sql = "SELECT * FROM udata WHERE id = $userid";  //入力した$useridのユーザー名を取得
-                    $stmt = $pdo->query($sql);
-                    foreach ($stmt as $row) {
-                        $row['name'];  // ユーザー名
-                        // $_SESSION["USERID"] = $row['name'];
-                    }
-                    $_SESSION["USERID"] = $row['name'];
-                    header("Location: Main.php");  // メイン画面へ遷移
-                    exit();  // 処理終了
-                } else {
-                    // 認証失敗
-                    $errorMessage = 'ユーザーIDあるいはパスワードに誤りがあります。';
-                }
-            } else {
-                // 4. 認証成功なら、セッションIDを新規に発行する
-                // 該当データなし
-                $errorMessage = 'ユーザーIDあるいはパスワードに誤りがあります。';
-            }
-        } catch (PDOException $e) {
-            $errorMessage = 'データベースエラー';
-            //$errorMessage = $sql;
-            // $e->getMessage() でエラー内容を参照可能（デバック時のみ表示）
-            // echo $e->getMessage();
-        }
+        // 入力したユーザID，パスワードをもとにログイン
+        login($_POST["userid"], $_POST["password"]);
     }
 }
 ?>

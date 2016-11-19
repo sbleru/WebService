@@ -1,6 +1,8 @@
 <?php
 // ini_set('session.cookie_secure', 1);
 session_start();
+include_once('Header.php');
+include_once('Functions.php');
 
 // ログイン状態チェック
 if (!isset($_SESSION["USERID"])) {
