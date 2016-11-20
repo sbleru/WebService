@@ -95,4 +95,107 @@ function show_posts($userid){
 	}	
 
 }
+
+function show_users(){
+	global $pdo;
+
+	$users = array();
+
+	try {
+		$stmt = $pdo->prepare('SELECT id, username from users where status=? order by username');
+        $stmt->execute(array('active'));
+
+        // idに対応させてユーザ名を保存する
+        foreach ($stmt as $row) {
+        	$users[$row['id']] = $row['username'];
+        }
+
+        return $users;
+
+	} catch (Exception $e) {
+		$errorMessage = 'データベースエラー';
+		echo $e->getMessage();
+	}	
+}
+
+function following($userid){
+	global $pdo;
+
+	$users = array();
+
+	try {
+		// 重複を省いてユーザIDを得る
+		$stmt = $pdo->prepare('SELECT distinct user_id FROM following
+			WHERE follower_id = ?');
+        $stmt->execute(array($userid));
+
+        // 
+        foreach ($stmt as $row) {
+        	// 配列$usersに値$row['user_id']をスタックさせる
+        	array_push($users, $row['user_id']);
+        }
+
+        return $users;
+
+	} catch (Exception $e) {
+		$errorMessage = 'データベースエラー';
+		echo $e->getMessage();
+	}	
+}
+
+// 自分$firstが誰か$secondをフォローしているかどうか，フォローテーブルに列があるかカウント
+function check_count($first, $second){
+	global $pdo;
+
+	try {
+		$stmt = $pdo->prepare('SELECT count(*) FROM following 
+			WHERE user_id=? and follower_id=?');
+        $stmt->execute(array($second, $first));
+
+        // 
+        foreach ($stmt as $row) {
+
+        }
+
+        return $row[0];
+
+	} catch (Exception $e) {
+		$errorMessage = 'データベースエラー';
+		echo $e->getMessage();
+	}	
+}
+
+function follow_user($me,$other){
+	$count = check_count($me,$other);
+
+	if ($count == 0){
+		try {
+			$stmt = $pdo->prepare('INSERT INTO following (user_id, follower_id) 
+				values (?,?)');
+	        $stmt->execute(array($other, $me));
+
+		} catch (Exception $e) {
+			$errorMessage = 'データベースエラー';
+			echo $e->getMessage();
+		}	
+	}
+}
+
+
+function unfollow_user($me,$other){
+	$count = check_count($me,$other);
+
+	if ($count != 0){
+		try {
+			$stmt = $pdo->prepare('DELETE FROM following 
+				WHERE user_id=? and follower_id=?
+				limit 1');
+	        $stmt->execute(array($other, $me));
+
+		} catch (Exception $e) {
+			$errorMessage = 'データベースエラー';
+			echo $e->getMessage();
+		}	
+	}
+}
 ?>

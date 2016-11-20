@@ -50,6 +50,8 @@ if(isset($_POST['post'])){
             <textarea name='body' rows='5' cols='40' wrap=VIRTUAL></textarea>
             <p><input type='submit' id = 'post' name='post' value='submit'/></p>
         </form>
+
+        <p><a href='Users.php'>see list of users</a></p>
     </body>
 </html>
 
@@ -60,6 +62,7 @@ if (count($posts)){
 ?>
 <table border='1' cellspacing='0' cellpadding='5' width='500'>
 <?php
+// 連想配列の分解
 foreach ($posts as $key => $list){
     echo "<tr valign='top'>\n";
     echo "<td>".$list['userid'] ."</td>\n";
