@@ -1,13 +1,31 @@
 <?php
-// ini_set('session.cookie_secure', 1);
 session_start();
 include_once('Header.php');
 include_once('Functions.php');
+
+$errorMessage = "";
 
 // ログイン状態チェック
 if (!isset($_SESSION["USERID"])) {
     header("Location: Logout.php");
     exit;
+}
+
+// 投稿メッセージ 
+if (isset($_SESSION['MESSAGE'])){
+    echo "<b>". $_SESSION['MESSAGE']."</b>";
+    unset($_SESSION['MESSAGE']);
+}
+
+if(isset($_POST['post'])){
+    // メッセージの入力チェック
+    if(empty($_POST['body'])){
+        $errorMessage = 'メッセージが未入力です。';
+    }
+    if(!empty($_POST['body'])){
+        $_SESSION['BODY'] = $_POST['body'];
+        header("Location: Add.php");
+    }
 }
 ?>
 
@@ -20,9 +38,41 @@ if (!isset($_SESSION["USERID"])) {
     <body>
         <h1>メイン画面</h1>
         <!-- ユーザーIDにHTMLタグが含まれても良いようにエスケープする -->
-        <p>Hello <u><?php echo htmlspecialchars($_SESSION["USERID"], ENT_QUOTES, "UTF-8"); ?></u>!</p>  <!-- ユーザー名をechoで表示 -->
+        <p>Hello <u><?php echo htmlspecialchars($_SESSION["USERNAME"], ENT_QUOTES, "UTF-8"); ?></u>!</p>  <!-- ユーザー名をechoで表示 -->
         <ul>
             <li><a href="Logout.php">ログアウト</a></li>
         </ul>
+
+        <!-- 投稿フォーム -->
+        <div><font color="#ff0000"><?php echo $errorMessage ?></font></div>
+        <form method='post' action=''>
+            <p>Your status:</p>
+            <textarea name='body' rows='5' cols='40' wrap=VIRTUAL></textarea>
+            <p><input type='submit' id = 'post' name='post' value='submit'/></p>
+        </form>
     </body>
 </html>
+
+<?php
+$posts = show_posts($_SESSION['USERID']);
+
+if (count($posts)){
+?>
+<table border='1' cellspacing='0' cellpadding='5' width='500'>
+<?php
+foreach ($posts as $key => $list){
+    echo "<tr valign='top'>\n";
+    echo "<td>".$list['userid'] ."</td>\n";
+    echo "<td>".$list['body'] ."<br/>\n";
+    echo "<small>".$list['stamp'] ."</small></td>\n";
+    echo "</tr>\n";
+}
+?>
+</table>
+<?php
+}else{
+?>
+<p><b>You haven't posted anything yet!</b></p>
+<?php
+}
+?>

@@ -30,11 +30,12 @@ function login($userid, $password){
                 // 入力したIDのユーザー名を取得
                 $sql = "SELECT * FROM users WHERE id = $userid";  //入力した$useridのユーザー名を取得
                 $stmt = $pdo->query($sql);
+                // TODO:これ必要か？
                 foreach ($stmt as $row) {
                     $row['username'];  // ユーザー名
-                    // $_SESSION["USERID"] = $row['name'];
                 }
-                $_SESSION["USERID"] = $row['username'];
+                $_SESSION["USERID"] = $row['id'];
+                $_SESSION["USERNAME"] = $row['username'];
                 header("Location: Main.php");  // メイン画面へ遷移
                 exit();  // 処理終了
             } else {
@@ -52,5 +53,46 @@ function login($userid, $password){
         // $e->getMessage() でエラー内容を参照可能（デバック時のみ表示）
         // echo $e->getMessage();
     }
+}
+
+// 投稿
+function add_post($userid,$body){
+	global $pdo;
+	date_default_timezone_set('Asia/Tokyo'); // タイムゾーン設定
+
+	try {
+		$stmt = $pdo->prepare('INSERT INTO posts (user_id, body, stamp) 
+			VALUES (?, ?, ?)');
+        $stmt->execute(array($userid, htmlspecialchars($body, ENT_QUOTES, "UTF-8"), date("Y-m-d H:i:s")));
+	} catch (Exception $e) {
+		$errorMessage = 'データベースエラー';
+		echo $e->getMessage();
+	}
+}
+
+// 投稿メッセージ表示
+function show_posts($userid){
+	global $pdo;
+
+	$posts = array();
+
+	try {
+		$stmt = $pdo->prepare('SELECT body, stamp FROM posts WHERE user_id = ? order by stamp desc');
+        $stmt->execute(array($userid));
+
+        foreach ($stmt as $row) {
+        	$posts[] = array( 	'stamp' => $row['stamp'], 
+								'userid' => $userid, 
+								'body' => $row['body']
+						);
+        }
+
+        return $posts;
+
+	} catch (Exception $e) {
+		$errorMessage = 'データベースエラー';
+		echo $e->getMessage();
+	}	
+
 }
 ?>
