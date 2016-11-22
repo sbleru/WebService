@@ -1,0 +1,37 @@
+database:miniblog
++--------------------+
+| Tables_in_miniblog |
++--------------------+
+| following          |
+| posts              |
+| users              |
++--------------------+
+
+table: users
++----------+---------------------------+------+-----+---------+----------------+
+| Field    | Type                      | Null | Key | Default | Extra          |
++----------+---------------------------+------+-----+---------+----------------+
+| id       | int(11)                   | NO   | PRI | NULL    | auto_increment |
+| username | varchar(255)              | NO   |     | NULL    |                |
+| email    | varchar(255)              | NO   |     | NULL    |                |
+| password | varchar(100)              | NO   |     | NULL    |                |
+| status   | enum('active','inactive') | NO   |     | NULL    |                |
++----------+---------------------------+------+-----+---------+----------------+
+
+table: posts
++---------+--------------+------+-----+---------+----------------+
+| Field   | Type         | Null | Key | Default | Extra          |
++---------+--------------+------+-----+---------+----------------+
+| id      | int(11)      | NO   | PRI | NULL    | auto_increment |
+| user_id | int(11)      | NO   |     | NULL    |                |
+| body    | varchar(140) | NO   |     | NULL    |                |
+| stamp   | datetime     | NO   |     | NULL    |                |
++---------+--------------+------+-----+---------+----------------+
+
+table: following
++-------------+---------+------+-----+---------+-------+
+| Field       | Type    | Null | Key | Default | Extra |
++-------------+---------+------+-----+---------+-------+
+| user_id     | int(11) | NO   | PRI | NULL    |       |
+| follower_id | int(11) | NO   | PRI | NULL    |       |
++-------------+---------+------+-----+---------+-------+
