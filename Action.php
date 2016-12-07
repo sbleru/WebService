@@ -20,5 +20,5 @@ switch ($do){
 }
 $_SESSION['MESSAGE'] = $msg;
 
-header("Location:Index.php");
+header("Location:Main.php");
 ?>

@@ -52,11 +52,44 @@ if(isset($_POST['post'])){
         </form>
 
         <p><a href='Users.php'>see list of users</a></p>
-    </body>
-</html>
+
+<h2>Users you're following</h2>
 
 <?php
-$posts = show_posts($_SESSION['USERID']);
+$users = show_users($_SESSION['USERID']);
+
+// if (count($users)){
+?>
+    <!-- <ul> -->
+    <?php
+    // foreach ($users as $key => $value){
+    //     echo "<li>".$value."</li>\n";
+    // }
+    ?>
+    <!-- </ul> -->
+<?php
+// }else{
+?>
+    <!-- <p><b>You're not following anyone yet!</b></p> -->
+<?php
+// }
+?>
+
+<?php
+// $users = show_users($_SESSION['USERID']);
+// if (count($users)){
+//     $myusers = array_keys($users);
+// }else{
+//     $myusers = array();
+// }
+// $myusers[] = $_SESSION['USERID'];
+
+// $posts = show_posts($myusers,5);
+$posts = show_posts($_SESSION['USERID'],5);
+?>
+
+<?php
+// $posts = show_posts($_SESSION['USERID']);
 
 if (count($posts)){
 ?>
@@ -79,3 +112,6 @@ foreach ($posts as $key => $list){
 <?php
 }
 ?>
+
+    </body>
+</html>

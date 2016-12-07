@@ -13,8 +13,10 @@ if (isset($_SESSION["USERID"])) {
 // セッションの変数のクリア
 $_SESSION = array();
 
-// セッションクリア
+// セッションクリア @の意味理解してる？
 @session_destroy();
+// TODO:クッキークリア
+
 ?>
 
 <!doctype html>

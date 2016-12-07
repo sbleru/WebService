@@ -28,8 +28,9 @@ function login($userid, $password){
                 session_regenerate_id(true);
 
                 // 入力したIDのユーザー名を取得
-                $sql = "SELECT * FROM users WHERE id = $userid";  //入力した$useridのユーザー名を取得
-                $stmt = $pdo->query($sql);
+                $sql = "SELECT * FROM users WHERE id = ?";  //入力した$useridのユーザー名を取得
+                $stmt->execute(array($userid));
+ 
                 // TODO:これ必要か？
                 foreach ($stmt as $row) {
                     $row['username'];  // ユーザー名
@@ -51,7 +52,7 @@ function login($userid, $password){
         $errorMessage = 'データベースエラー';
         //$errorMessage = $sql;
         // $e->getMessage() でエラー内容を参照可能（デバック時のみ表示）
-        // echo $e->getMessage();
+        echo $e->getMessage();
     }
 }
 
@@ -71,32 +72,95 @@ function add_post($userid,$body){
 }
 
 // 投稿メッセージ表示
-function show_posts($userid){
+// function show_posts($userid){
+// 	global $pdo;
+
+// 	$posts = array();
+
+// 	try {
+// 		$stmt = $pdo->prepare('SELECT body, stamp FROM posts WHERE user_id = ? order by stamp desc');
+//         $stmt->execute(array($userid));
+
+//         foreach ($stmt as $row) {
+//         	$posts[] = array( 	'stamp' => $row['stamp'], 
+// 								'userid' => $userid, 
+// 								'body' => $row['body']
+// 						);
+//         }
+
+//         return $posts;
+
+// 	} catch (Exception $e) {
+// 		$errorMessage = 'データベースエラー';
+// 		echo $e->getMessage();
+// 	}	
+
+// }
+
+// フォローユーザの投稿メッセージ表示
+function show_posts($userid,$limit=0){
+
 	global $pdo;
 
-	$posts = array();
+	if ($userid > 0){
+		$follow = array();
 
+		try {
+			$stmt = $pdo->prepare('SELECT user_id from following where follower_id=?');
+	        $stmt->execute(array($userid));
+
+	        // フォローしているユーザと自分のidを格納
+	        foreach ($stmt as $row) {
+	        	array_push($follow, $row['user_id']);
+	        }
+	        array_push($follow, $userid);
+	        
+	        // 
+			if (count($follow)){
+				$id_string = implode(',', $follow);
+				$user_string = "($id_string)";
+				$extra =  " and id in ($id_string)";
+			}else{
+				return array();
+			}
+
+			// 投稿数を制限
+			if ($limit > 0){
+				$extra = "limit $limit";
+			}else{
+				$extra = '';	
+			}
+
+		} catch (Exception $e) {
+			$errorMessage = 'データベースエラー';
+			echo $e->getMessage();
+		}
+	}
+
+	$users = array();
 	try {
-		$stmt = $pdo->prepare('SELECT body, stamp FROM posts WHERE user_id = ? order by stamp desc');
-        $stmt->execute(array($userid));
+		$stmt = $pdo->prepare("SELECT user_id, body, stamp FROM posts WHERE user_id in $user_string order by stamp desc $extra");
+        $stmt->execute();
 
         foreach ($stmt as $row) {
         	$posts[] = array( 	'stamp' => $row['stamp'], 
-								'userid' => $userid, 
+								'userid' => $row['user_id'], 
 								'body' => $row['body']
 						);
         }
 
         return $posts;
 
-	} catch (Exception $e) {
-		$errorMessage = 'データベースエラー';
+    } catch (Exception $e){
+    	$errorMessage = 'データベースエラー';
 		echo $e->getMessage();
-	}	
+    }
 
 }
 
-function show_users(){
+
+
+function show_all_users($user_id=0){
 	global $pdo;
 
 	$users = array();
@@ -115,7 +179,54 @@ function show_users(){
 	} catch (Exception $e) {
 		$errorMessage = 'データベースエラー';
 		echo $e->getMessage();
-	}	
+	}
+
+	return $users;
+}
+
+function show_users($user_id=0){
+	global $pdo;
+
+	if ($user_id > 0){
+		$follow = array();
+
+		try {
+			$stmt = $pdo->prepare('SELECT user_id from following where follower_id=?');
+	        $stmt->execute(array($user_id));
+
+	        foreach ($stmt as $row) {
+	        	array_push($follow, $row['user_id']);
+	        }
+	        
+			if (count($follow)){
+				$id_string = implode(',', $follow);
+				$extra =  " and id in ($id_string)";
+			}else{
+				return array();
+			}
+
+		} catch (Exception $e) {
+			$errorMessage = 'データベースエラー';
+			echo $e->getMessage();
+		}
+
+	}
+
+	$users = array();
+	try {
+		$stmt = $pdo->prepare("SELECT id, username FROM users WHERE status=? $extra order by username");
+        $stmt->execute(array('active'));
+
+    	foreach ($stmt as $row) {
+        	$users[$row['id']] = $row['username'];
+        }
+
+    } catch (Exception $e){
+    	$errorMessage = 'データベースエラー';
+		echo $e->getMessage();
+    }
+
+	return $users;
 }
 
 function following($userid){
@@ -166,6 +277,7 @@ function check_count($first, $second){
 }
 
 function follow_user($me,$other){
+	global $pdo;
 	$count = check_count($me,$other);
 
 	if ($count == 0){
@@ -183,6 +295,7 @@ function follow_user($me,$other){
 
 
 function unfollow_user($me,$other){
+	global $pdo;
 	$count = check_count($me,$other);
 
 	if ($count != 0){

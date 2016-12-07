@@ -14,7 +14,7 @@ include_once("Functions.php");
 
 <h1>List of Users</h1>
 <?php
-$users = show_users();
+$users = show_all_users();
 $following = following($_SESSION['USERID']);
 
 if (count($users)){
@@ -26,7 +26,7 @@ foreach ($users as $key => $value){
 	echo "<td>".$key ."</td>\n";
 	echo "<td>".$value;
 	// $followingに$keyが入っているかどうか　フォローしているユーザの中にIDが$keyのものがいるか
-	if (in_array($key,$following,true)){
+	if (in_array($key,$following)){
 		echo " <small>
 		<a href='Action.php?id=$key&do=unfollow'>unfollow</a>
 		</small>";
