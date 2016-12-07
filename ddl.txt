@@ -8,30 +8,31 @@ database:miniblog
 +--------------------+
 
 table: users
-+----------+---------------------------+------+-----+---------+----------------+
-| Field    | Type                      | Null | Key | Default | Extra          |
-+----------+---------------------------+------+-----+---------+----------------+
-| id       | int(11)                   | NO   | PRI | NULL    | auto_increment |
-| username | varchar(255)              | NO   |     | NULL    |                |
-| email    | varchar(255)              | NO   |     | NULL    |                |
-| password | varchar(100)              | NO   |     | NULL    |                |
-| status   | enum('active','inactive') | NO   |     | NULL    |                |
-+----------+---------------------------+------+-----+---------+----------------+
++----------+---------------------------+-----------------+------+-----+---------+----------------+---------------------------------+---------+
+| Field    | Type                      | Collation       | Null | Key | Default | Extra          | Privileges                      | Comment |
++----------+---------------------------+-----------------+------+-----+---------+----------------+---------------------------------+---------+
+| id       | int(11)                   | NULL            | NO   | PRI | NULL    | auto_increment | select,insert,update,references |         |
+| username | varchar(255)              | utf8_general_ci | NO   |     | NULL    |                | select,insert,update,references |         |
+| email    | varchar(255)              | utf8_general_ci | NO   |     | NULL    |                | select,insert,update,references |         |
+| password | varchar(100)              | utf8_general_ci | NO   |     | NULL    |                | select,insert,update,references |         |
+| status   | enum('active','inactive') | utf8_general_ci | NO   |     | NULL    |                | select,insert,update,references |         |
++----------+---------------------------+-----------------+------+-----+---------+----------------+---------------------------------+---------+
 
 table: posts
-+---------+--------------+------+-----+---------+----------------+
-| Field   | Type         | Null | Key | Default | Extra          |
-+---------+--------------+------+-----+---------+----------------+
-| id      | int(11)      | NO   | PRI | NULL    | auto_increment |
-| user_id | int(11)      | NO   |     | NULL    |                |
-| body    | varchar(140) | NO   |     | NULL    |                |
-| stamp   | datetime     | NO   |     | NULL    |                |
-+---------+--------------+------+-----+---------+----------------+
++---------+--------------+-----------------+------+-----+---------+----------------+---------------------------------+---------+
+| Field   | Type         | Collation       | Null | Key | Default | Extra          | Privileges                      | Comment |
++---------+--------------+-----------------+------+-----+---------+----------------+---------------------------------+---------+
+| id      | int(11)      | NULL            | NO   | PRI | NULL    | auto_increment | select,insert,update,references |         |
+| user_id | int(11)      | NULL            | NO   |     | NULL    |                | select,insert,update,references |         |
+| body    | varchar(140) | utf8_general_ci | NO   |     | NULL    |                | select,insert,update,references |         |
+| stamp   | datetime     | NULL            | NO   |     | NULL    |                | select,insert,update,references |         |
++---------+--------------+-----------------+------+-----+---------+----------------+---------------------------------+---------+
 
 table: following
-+-------------+---------+------+-----+---------+-------+
-| Field       | Type    | Null | Key | Default | Extra |
-+-------------+---------+------+-----+---------+-------+
-| user_id     | int(11) | NO   | PRI | NULL    |       |
-| follower_id | int(11) | NO   | PRI | NULL    |       |
-+-------------+---------+------+-----+---------+-------+
++-------------+---------+-----------+------+-----+---------+-------+---------------------------------+---------+
+| Field       | Type    | Collation | Null | Key | Default | Extra | Privileges                      | Comment |
++-------------+---------+-----------+------+-----+---------+-------+---------------------------------+---------+
+| user_id     | int(11) | NULL      | NO   | PRI | NULL    |       | select,insert,update,references |         |
+| follower_id | int(11) | NULL      | NO   | PRI | NULL    |       | select,insert,update,references |         |
++-------------+---------+-----------+------+-----+---------+-------+---------------------------------+---------+
+
