@@ -8,6 +8,10 @@ include_once('index.php');
 
 // ログインボタンが押された場合
 if (isset($_POST["login"])) {
+    // CSRF対策
+    if(session_id() !== $_POST['token']){
+        die('正規の画面からご利用ください');
+    }
     // ユーザIDの入力チェック
     if (empty($_POST["userid"])) {
         $function->set_error('ユーザーIDが未入力です。');
@@ -29,8 +33,9 @@ $smarty->assign('error_message', $function->get_error());
 if(!empty($_POST["userid"])){
     $smarty->assign('userid', htmlspecialchars($_POST["userid"], ENT_QUOTES, "UTF-8"));
 } else {
-    $smarty->assign('userid', "");
+    $smarty->assign('userid', htmlspecialchars($_POST["userid"], ENT_QUOTES, "UTF-8"));
 }
+$smarty->assign('token', htmlspecialchars(session_id(), ENT_QUOTES, "UTF-8"));
 // 結果出力
 $smarty->display('login.tpl');
 ?>

@@ -20,9 +20,18 @@ $smarty->display('logout.tpl');
 // セッションの変数のクリア
 $_SESSION = array();
 
+// TODO:クッキークリア
+// セッションを切断するにはセッションクッキーも削除する。
+// Note: セッション情報だけでなくセッションを破壊する。
+// if (ini_get("session.use_cookies")) {
+//     $params = session_get_cookie_params();
+//     setcookie(session_name(), '', time() - 42000,
+//         $params["path"], $params["domain"],
+//         $params["secure"], $params["httponly"]
+//     );
+// }
+
 // セッションクリア
 session_destroy();
-// TODO:クッキークリア
-
 ?>
 
