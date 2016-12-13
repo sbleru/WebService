@@ -1,20 +1,19 @@
 <?php
 // ini_set('session.cookie_secure', 1);
 session_start();
-include_once('Header.php');
-include_once('Functions.php');
+include_once("index.php");
 
 if (isset($_SESSION["USERID"])) {
-    $errorMessage = "ログアウトしました。";
+    $function->set_error('ログアウトしました。');
 } else {
-    $errorMessage = "セッションがタイムアウトしました。";
+    $function->set_error('セッションがタイムアウトしました。');
 }
 
 // セッションの変数のクリア
 $_SESSION = array();
 
-// セッションクリア @の意味理解してる？
-@session_destroy();
+// セッションクリア
+session_destroy();
 // TODO:クッキークリア
 
 ?>
@@ -27,7 +26,7 @@ $_SESSION = array();
     </head>
     <body>
         <h1>ログアウト画面</h1>
-        <div><?php echo $errorMessage; ?></div>
+        <div><?php echo $function->get_error(); ?></div>
         <ul>
             <li><a href="Login.php">ログイン画面に戻る</a></li>
         </ul>

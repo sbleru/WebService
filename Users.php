@@ -1,21 +1,20 @@
 <?php 
 session_start();
-include_once("Header.php");
-include_once("Functions.php");
+include_once("index.php");
 
 ?>
 
 <!doctype html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Microblogging Application - Users</title>
+	<title>miniblog Application - Users</title>
 </head>
 <body>
 
 <h1>List of Users</h1>
 <?php
-$users = show_all_users();
-$following = following($_SESSION['USERID']);
+$users = $function->show_all_users();
+$following = $function->following($_SESSION['USERID']);
 
 if (count($users)){
 ?>

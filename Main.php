@@ -1,7 +1,6 @@
 <?php
 session_start();
-include_once('Header.php');
-include_once('Functions.php');
+include_once('index.php');
 
 $errorMessage = "";
 
@@ -20,7 +19,7 @@ if (isset($_SESSION['MESSAGE'])){
 if(isset($_POST['post'])){
     // メッセージの入力チェック
     if(empty($_POST['body'])){
-        $errorMessage = 'メッセージが未入力です。';
+        $this->set_error('メッセージが未入力です。');
     }
     if(!empty($_POST['body'])){
         $_SESSION['BODY'] = $_POST['body'];
@@ -44,7 +43,7 @@ if(isset($_POST['post'])){
         </ul>
 
         <!-- 投稿フォーム -->
-        <div><font color="#ff0000"><?php echo $errorMessage ?></font></div>
+        <div><font color="#ff0000"><?php echo $function->get_error(); ?></font></div>
         <form method='post' action=''>
             <p>Your status:</p>
             <textarea name='body' rows='5' cols='40' wrap=VIRTUAL></textarea>
@@ -56,41 +55,11 @@ if(isset($_POST['post'])){
 <h2>Users you're following</h2>
 
 <?php
-$users = show_users($_SESSION['USERID']);
-
-// if (count($users)){
-?>
-    <!-- <ul> -->
-    <?php
-    // foreach ($users as $key => $value){
-    //     echo "<li>".$value."</li>\n";
-    // }
-    ?>
-    <!-- </ul> -->
-<?php
-// }else{
-?>
-    <!-- <p><b>You're not following anyone yet!</b></p> -->
-<?php
-// }
+$users = $function->show_users($_SESSION['USERID']);
+$posts = $function->show_posts($_SESSION['USERID'],5);
 ?>
 
 <?php
-// $users = show_users($_SESSION['USERID']);
-// if (count($users)){
-//     $myusers = array_keys($users);
-// }else{
-//     $myusers = array();
-// }
-// $myusers[] = $_SESSION['USERID'];
-
-// $posts = show_posts($myusers,5);
-$posts = show_posts($_SESSION['USERID'],5);
-?>
-
-<?php
-// $posts = show_posts($_SESSION['USERID']);
-
 if (count($posts)){
 ?>
 <table border='1' cellspacing='0' cellpadding='5' width='500'>

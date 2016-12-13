@@ -1,19 +1,18 @@
 <?php
 session_start();
-include_once("Header.php");
-include_once("Functions.php");
+include_once("index.php");
 
 $id = $_GET['id'];
 $do = $_GET['do'];
 
 switch ($do){
 	case "follow":
-		follow_user($_SESSION['USERID'],$id);
+		$function->follow_user($_SESSION['USERID'],$id);
 		$msg = "You have followed a user!";
 	break;
 
 	case "unfollow":
-		unfollow_user($_SESSION['USERID'],$id);
+		$function->unfollow_user($_SESSION['USERID'],$id);
 		$msg = "You have unfollowed a user!";
 	break;
 
@@ -21,4 +20,3 @@ switch ($do){
 $_SESSION['MESSAGE'] = $msg;
 
 header("Location:Main.php");
-?>
