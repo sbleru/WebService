@@ -9,6 +9,14 @@ if (isset($_SESSION["USERID"])) {
     $function->set_error('セッションがタイムアウトしました。');
 }
 
+$smarty = new Smarty();
+// テンプレート格納ディレクトリを指定
+$smarty->template_dir = 'templates/';
+// 割り当て
+$smarty->assign('error_message', $function->get_error());
+// 結果出力
+$smarty->display('logout.tpl');
+
 // セッションの変数のクリア
 $_SESSION = array();
 
@@ -18,17 +26,3 @@ session_destroy();
 
 ?>
 
-<!doctype html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>ログアウト</title>
-    </head>
-    <body>
-        <h1>ログアウト画面</h1>
-        <div><?php echo $function->get_error(); ?></div>
-        <ul>
-            <li><a href="Login.php">ログイン画面に戻る</a></li>
-        </ul>
-    </body>
-</html>

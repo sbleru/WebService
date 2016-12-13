@@ -21,41 +21,16 @@ if (isset($_POST["login"])) {
     }
 }
 
-// $smarty = new Smarty();
-// // テンプレート格納ディレクトリを指定
-// $smarty->template_dir = 'templates/';
-// // テンプレートの{$abc}に「World」という文字列を割り当てる
-// $smarty->assign('abc', 'World');
-// // 結果出力
-// $smarty->display('sample.tpl');
+$smarty = new Smarty();
+// テンプレート格納ディレクトリを指定
+$smarty->template_dir = 'templates/';
+// 割り当て
+$smarty->assign('error_message', $function->get_error());
+if(!empty($_POST["userid"])){
+    $smarty->assign('userid', htmlspecialchars($_POST["userid"], ENT_QUOTES, "UTF-8"));
+} else {
+    $smarty->assign('userid', "");
+}
+// 結果出力
+$smarty->display('login.tpl');
 ?>
-
-<!doctype html>
-<html>
-    <head>
-            <meta charset="UTF-8">
-            <title>ログイン</title>
-    </head>
-    <body>
-        <h1>ログイン画面</h1>
-        <!-- $_SERVER['PHP_SELF']はXSSの危険性があるので、actionは空にしておく -->
-        <form id="loginForm" name="loginForm" action="" method="POST">
-            <fieldset>
-                <legend>ログインフォーム</legend>
-                <div><font color="#ff0000"><?php echo $function->get_error(); ?></font></div>
-                <label for="userid">ユーザーID</label><input type="text" id="userid" name="userid" placeholder="ユーザーIDを入力" value="<?php if (!empty($_POST["userid"])) {echo htmlspecialchars($_POST["userid"], ENT_QUOTES, "UTF-8");} ?>">
-                <br>
-                <label for="password">パスワード</label><input type="password" id="password" name="password" value="" placeholder="パスワードを入力">
-                <br>
-                <input type="submit" id="login" name="login" value="ログイン">
-            </fieldset>
-        </form>
-        <br>
-        <form action="SignUp.php">
-            <fieldset>
-                <legend>新規登録フォーム</legend>
-                <input type="submit" value="新規登録">
-            </fieldset>
-        </form>
-    </body>
-</html>

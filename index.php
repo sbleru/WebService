@@ -13,5 +13,7 @@ $connInfo = array(
 );
 Header::setConnectionInfo($connInfo);
 
+date_default_timezone_set('Asia/Tokyo'); // タイムゾーン設定
+
 $function = new Functions();
 // $smarty = new Smarty();

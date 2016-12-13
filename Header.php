@@ -13,7 +13,15 @@ class Header
 	public function set_error($error_mess){
 		$this->errorMessagge = $error_mess;
 	}
-
+	// 諸所のメッセージの初期化
+	public $messagge = "";
+	public function get_message(){
+		return $this->messagge;
+	}
+	public function set_message($mess){
+		$this->messagge = $mess;
+	}
+	
     public function __construct()
     {
         $this->initDb();

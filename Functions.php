@@ -1,9 +1,6 @@
 <?php
 class Functions extends Header
 {
-	// サインアップ成功したら使用
-	public $SignUpMessage = "";
-
 	// 親のコンストラクタを呼ぶ	
 	function __construct() {
 	    parent::__construct();
@@ -16,7 +13,8 @@ class Functions extends Header
 	        $stmt->execute(array($username, $email, password_hash($password, PASSWORD_DEFAULT), 'active'));  // パスワードのハッシュ化を行う（今回は文字列のみなのでbindValue(変数の内容が変わらない)を使用せず、直接excuteに渡しても問題ない）
 	        $userid = $this->pdo->lastInsertid();  // 登録した(DB側でauto_incrementした)IDを$useridに入れる
 
-	        $SignUpMessage = '登録が完了しました。あなたの登録IDは '. $userid. ' です。メールアドレスは　'.$email. '　です．パスワードは '. $password. ' です。';  // ログイン時に使用するIDとパスワード
+	        // ログイン時に使用するIDとパスワード
+	        $this->set_message('登録が完了しました。あなたの登録IDは '. $userid. ' です。メールアドレスは　'.$email. '　です．パスワードは '. $password. ' です。');
 	    } catch (PDOException $e) {
 	    	$this->set_error('データベースエラー');
 	        // $e->getMessage() でエラー内容を参照可能（デバック時のみ表示）
@@ -65,7 +63,6 @@ class Functions extends Header
 
 	// 投稿
 	public function add_post($userid,$body){
-		date_default_timezone_set('Asia/Tokyo'); // タイムゾーン設定
 
 		try {
 			$stmt = $this->pdo->prepare('INSERT INTO posts (user_id, body, stamp) 
